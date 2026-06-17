@@ -1,8 +1,6 @@
 # Entropy Atlas: Behavioral Stability Intelligence Platform
 
-> **Status:** Production-Ready  
-> **Type:** Core Infrastructure Service  
-> **Maintainers:** Platform Engineering  
+> **Type:** Core Infrastructure Service
 
 ---
 
