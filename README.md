@@ -174,8 +174,13 @@ Entropy Atlas uses a highly decoupled, event-driven topology optimized for write
 |                         |
 +-------------------------+
 ```
+## 8.1 Architecture Diagram
 
+![Entropy Atlas Architecture Diagram](./architecture.png)
+
+*Figure 8.1: High-level system architecture of Entropy Atlas.*
 ---
+
 
 ## 9. Technology Stack
 
