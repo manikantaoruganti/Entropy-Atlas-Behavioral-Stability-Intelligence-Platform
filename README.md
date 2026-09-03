@@ -324,7 +324,6 @@ The AI Risk Manager extends the existing Spring Boot application with a dedicate
 
 
 
-```
 ---
 
 ## 8.1 Architecture Diagram
