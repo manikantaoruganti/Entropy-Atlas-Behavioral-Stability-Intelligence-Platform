@@ -31,6 +31,9 @@ public class KafkaConfig {
     public static final String ENTITY_ENTROPY_TOPIC = "entity-entropy";
     public static final String ENTITY_DRIFT_TOPIC = "entity-drift";
     public static final String ENTITY_STABILITY_TOPIC = "entity-stability";
+    public static final String PAYMENT_RISK_EVENTS_TOPIC = "payment-risk-events";
+    public static final String PAYMENT_RISK_AUDIT_TOPIC = "payment-risk-audit";
+
 
     @Bean(name = KafkaStreamsDefaultConfiguration.DEFAULT_STREAMS_CONFIG_BEAN_NAME)
     public KafkaStreamsConfiguration kStreamsConfig() {

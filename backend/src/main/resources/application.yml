@@ -8,7 +8,7 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: create # In production, use 'none' and manage migrations with Flyway/Liquibase
+      ddl-auto: update # Keep existing data and auto-update schema
     show-sql: true
     properties:
       hibernate:
@@ -56,3 +56,9 @@ springdoc:
     tagsSorter: alpha
   api-docs:
     path: /v3/api-docs
+
+evaluation:
+  dataset-version: v1
+  false-positive-cost: 0.01
+  false-negative-cost: 1.00
+  run-on-startup: false

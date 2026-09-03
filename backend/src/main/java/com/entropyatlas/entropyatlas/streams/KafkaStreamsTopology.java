@@ -20,6 +20,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
+import com.entropyatlas.entropyatlas.api.dto.PaymentRiskEventRequest;
+import com.entropyatlas.entropyatlas.api.dto.PaymentRiskEventResponse;
+import com.entropyatlas.entropyatlas.services.PaymentRiskService;
+import org.apache.kafka.streams.state.StoreBuilder;
+import org.apache.kafka.streams.state.Stores;
 
 import java.time.Duration;
 
@@ -29,6 +34,7 @@ import java.time.Duration;
 public class KafkaStreamsTopology {
 
     private final FeatureExtractionService featureExtractionService;
+    private final PaymentRiskService paymentRiskService;
     private final EntropyCalculationService entropyCalculationService;
     private final DriftAnalysisService driftAnalysisService;
     private final StabilityScoringService stabilityScoringService;
@@ -141,6 +147,51 @@ public class KafkaStreamsTopology {
                 .peek((key, value) -> log.debug("Produced stability snapshot for {}: {}", key, value.toString()));
 
         stabilityStream.to(KafkaConfig.ENTITY_STABILITY_TOPIC, Produced.with(Serdes.String(), stabilitySnapshotSerde));
+
+    // ===== Payment Risk Integration =====
+    // State store for idempotency
+    StoreBuilder<KeyValueStore<String, Boolean>> processedPaymentsStoreBuilder =
+            Stores.keyValueStoreBuilder(Stores.persistentKeyValueStore("processed-payments-store"),
+                    Serdes.String(), Serdes.Boolean());
+    builder.addStateStore(processedPaymentsStoreBuilder);
+
+    // Ingest payment risk events
+    KStream<String, String> paymentRiskRawStream = builder.stream(
+            KafkaConfig.PAYMENT_RISK_EVENTS_TOPIC,
+            Consumed.with(Serdes.String(), Serdes.String()));
+
+    // Deserialize to DTO
+    final Serde<PaymentRiskEventRequest> paymentRiskRequestSerde = Serdes.serdeFrom(
+            new JsonSerializer<>(objectMapper),
+            new JsonDeserializer<>(PaymentRiskEventRequest.class, objectMapper));
+
+    KStream<String, PaymentRiskEventRequest> paymentRiskRequestStream = paymentRiskRawStream
+            .mapValues(v -> {
+                try {
+                    return objectMapper.readValue(v, PaymentRiskEventRequest.class);
+                } catch (Exception e) {
+                    log.error("Failed to deserialize payment risk event: {}", e.getMessage());
+                    return null;
+                }
+            })
+            .filter((k, v) -> v != null);
+
+    // Process with PaymentRiskProcessor
+    KStream<String, PaymentRiskEventResponse> paymentRiskResponseStream = paymentRiskRequestStream
+            .transformValues(() -> new PaymentRiskProcessor(paymentRiskService, objectMapper),
+                    "processed-payments-store");
+
+    // Serialize response
+    final Serde<PaymentRiskEventResponse> paymentRiskResponseSerde = Serdes.serdeFrom(
+            new JsonSerializer<>(objectMapper),
+            new JsonDeserializer<>(PaymentRiskEventResponse.class, objectMapper));
+
+    // Publish audit events
+    paymentRiskResponseStream
+            .filter((k, v) -> v != null)
+            .to(KafkaConfig.PAYMENT_RISK_AUDIT_TOPIC,
+                    Produced.with(Serdes.String(), paymentRiskResponseSerde));
+    // ===== End Payment Risk Integration =====
 
         return behaviorEventsStream; // Return the initial stream for chaining if needed
     }
