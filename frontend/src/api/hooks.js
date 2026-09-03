@@ -339,7 +339,7 @@ export const useRawPrometheusMetrics = () => {
       const metrics = {};
       text.split('\n').forEach(line => {
         if (line && !line.startsWith('#')) {
-          const match = line.match(/^([a-zA-Z_:][a-zA-Z0-9_:]*)\s+([\d.eE+-]+)/);
+          const match = line.match(/^([a-zA-Z_:][a-zA-Z0-9_:]*)(?:\{[^}]*\})?\s+([\d.eE+-]+)/);
           if (match) {
             metrics[match[1]] = parseFloat(match[2]);
           }
@@ -366,4 +366,111 @@ export const useActuatorHealth = () => {
 export const usePrometheusMetric = (metricName) => {
   const { data: allMetrics } = useRawPrometheusMetrics();
   return allMetrics ? allMetrics[metricName] || 0 : 0;
+};
+// --- Risk Workflow APIs ---
+export const useRiskAlerts = () => {
+  return useQuery({
+    queryKey: ['riskAlerts'],
+    queryFn: () => axiosInstance.get('/api/v1/risk/alerts').then(res => {
+      const d = res.data;
+      return Array.isArray(d) ? d : (d?.content || []);
+    }),
+  });
+};
+
+export const useRiskMetrics = () => {
+  return useQuery({
+    queryKey: ['riskMetrics'],
+    queryFn: () => axiosInstance.get('/api/v1/risk/metrics').then(res => res.data),
+  });
+};
+
+export const useRiskIncidents = (incidentId) => {
+  return useQuery({
+    queryKey: ['riskIncidents', incidentId],
+    queryFn: () => axiosInstance.get(`/api/v1/risk/incidents/${incidentId}`).then(res => res.data),
+    enabled: !!incidentId,
+  });
+};
+
+export const useRiskInvestigations = () => {
+  return useQuery({
+    queryKey: ['riskInvestigations'],
+    queryFn: () => axiosInstance.get('/api/v1/risk/investigations').then(res => res.data),
+  });
+};
+
+export const useRiskEvidence = (incidentId) => {
+  return useQuery({
+    queryKey: ['riskEvidence', incidentId],
+    queryFn: () => axiosInstance.get(`/api/v1/risk/incidents/${incidentId}/evidence`).then(res => res.data),
+    enabled: !!incidentId,
+  });
+};
+
+export const useRiskDecisions = () => {
+  return useQuery({
+    queryKey: ['riskDecisions'],
+    queryFn: () => axiosInstance.get('/api/v1/risk/decisions').then(res => {
+      const d = res.data;
+      return Array.isArray(d) ? d : (d?.content || []);
+    }),
+  });
+};
+
+export const useRiskAudit = (incidentId) => {
+  return useQuery({
+    queryKey: ['riskAudit', incidentId],
+    queryFn: () => {
+      const url = incidentId ? `/api/v1/risk/incidents/${incidentId}/audit` : '/api/v1/risk/audit';
+      return axiosInstance.get(url).then(res => {
+        const d = res.data;
+        return Array.isArray(d) ? d : (d?.content || []);
+      });
+    },
+  });
+};
+
+export const useRiskReplay = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload) => {
+      const entityId = payload?.entityId || payload;
+      return axiosInstance.post(`/api/v1/risk/replay/${entityId}`).then(res => res.data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['riskReplay'] });
+    },
+    onError: (error) => {
+      console.error('Risk replay failed', error);
+    },
+  });
+};
+
+// Evaluation API (latest evaluation result)
+export const useRiskEvaluation = () => {
+  return useQuery({
+    queryKey: ['riskEvaluation'],
+    queryFn: () => axiosInstance.get('/api/evaluation/latest').then(res => res.data),
+  });
+};
+
+export const usePaymentScenarioSimulation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (request) =>
+      axiosInstance.post('/api/scenario/start', request)
+        .catch(() => axiosInstance.post('/api/v1/scenario/start', request))
+        .then(res => res.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['paymentScenario'] });
+      queryClient.invalidateQueries({ queryKey: ['riskAlerts'] });
+      queryClient.invalidateQueries({ queryKey: ['riskDecisions'] });
+      queryClient.invalidateQueries({ queryKey: ['riskMetrics'] });
+      queryClient.invalidateQueries({ queryKey: ['riskEvaluation'] });
+    },
+    onError: (error) => {
+      console.error('Scenario simulation failed', error);
+    },
+  });
 };

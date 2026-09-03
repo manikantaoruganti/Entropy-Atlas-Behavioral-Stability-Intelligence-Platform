@@ -4,7 +4,8 @@ import { useActuatorHealth } from '../api/hooks';
 import {
   Users, Activity, GitFork, Clock, RefreshCcw, BarChart2,
   HeartPulse, LayoutDashboard, Menu, Atom, Zap, Cloud,
-  ChevronRight, ChevronDown, Send
+  ChevronRight, ChevronDown, Send,
+  ShieldAlert, Search, Target, FlaskConical, FileText
 } from 'lucide-react';
 
 const NavItem = ({ to, icon: Icon, label, isSidebarOpen }) => {
@@ -33,6 +34,7 @@ const SectionToggle = ({ label, isOpen, onToggle, isSidebarOpen }) => {
 const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
   const navigate = useNavigate();
   const [sections, setSections] = useState({
+    risk: true,
     intelligence: true,
     operations: true,
     observability: true,
@@ -54,18 +56,32 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
         {isSidebarOpen && (
           <div className="sidebar-brand" onClick={() => navigate('/')}>
             <span className="sidebar-brand-name">Entropy Atlas</span>
-            <span className="sidebar-brand-tag">Behavioral Intelligence</span>
+            <span className="sidebar-brand-tag">Risk Operations</span>
           </div>
         )}
       </div>
 
       <nav className="sidebar-nav">
-        {/* Core Intelligence */}
+        {/* Risk Operations */}
         <div>
-          <SectionToggle label="Intelligence" isOpen={sections.intelligence} onToggle={() => toggle('intelligence')} isSidebarOpen={isSidebarOpen} />
+          <SectionToggle label="Risk Operations" isOpen={sections.risk} onToggle={() => toggle('risk')} isSidebarOpen={isSidebarOpen} />
+          {(!isSidebarOpen || sections.risk) && (
+            <div className="flex flex-col gap-1">
+              <NavItem to="/" icon={ShieldAlert} label="Risk Command" isSidebarOpen={isSidebarOpen} />
+              <NavItem to="/risk-investigation" icon={Search} label="Investigation" isSidebarOpen={isSidebarOpen} />
+              <NavItem to="/risk-evaluation" icon={Target} label="Evaluation" isSidebarOpen={isSidebarOpen} />
+              <NavItem to="/risk-simulator" icon={FlaskConical} label="Simulator" isSidebarOpen={isSidebarOpen} />
+              <NavItem to="/risk-audit" icon={FileText} label="Audit" isSidebarOpen={isSidebarOpen} />
+            </div>
+          )}
+        </div>
+
+        {/* Core Intelligence */}
+        <div className="mt-4">
+          <SectionToggle label="Behavioral Stability" isOpen={sections.intelligence} onToggle={() => toggle('intelligence')} isSidebarOpen={isSidebarOpen} />
           {(!isSidebarOpen || sections.intelligence) && (
             <div className="flex flex-col gap-1">
-              <NavItem to="/" icon={LayoutDashboard} label="Command Center" isSidebarOpen={isSidebarOpen} />
+              <NavItem to="/stability-dashboard" icon={LayoutDashboard} label="Stability Control" isSidebarOpen={isSidebarOpen} />
               <NavItem to="/entities" icon={Users} label="Entity Registry" isSidebarOpen={isSidebarOpen} />
               <NavItem to="/entropy-explorer" icon={Atom} label="Entropy Analysis" isSidebarOpen={isSidebarOpen} />
               <NavItem to="/drift-attribution" icon={GitFork} label="Drift Attribution" isSidebarOpen={isSidebarOpen} />
@@ -133,7 +149,8 @@ const Layout = ({ children }) => {
 
   const getPageMeta = (pathname) => {
     const routes = {
-      '/': { title: 'Command Center', subtitle: 'Platform stability overview' },
+      '/': { title: 'Risk Command Center', subtitle: 'Payment risk overview and alerts' },
+      '/stability-dashboard': { title: 'Stability Control Center', subtitle: 'Platform stability overview' },
       '/entities': { title: 'Entity Registry', subtitle: 'Behavioral entity directory' },
       '/entropy-explorer': { title: 'Entropy Analysis', subtitle: 'Multi-dimensional entropy decomposition' },
       '/drift-attribution': { title: 'Drift Attribution', subtitle: 'Root cause analysis' },
@@ -144,6 +161,11 @@ const Layout = ({ children }) => {
       '/system-health': { title: 'Infrastructure', subtitle: 'System health and dependencies' },
       '/architecture': { title: 'Architecture', subtitle: 'System topology explorer' },
       '/event-ingestion': { title: 'Event Ingestion', subtitle: 'Transmit behavioral telemetry events' },
+      '/risk-command-center': { title: 'Risk Command Center', subtitle: 'Payment risk overview and alerts' },
+      '/risk-investigation': { title: 'Risk Investigation', subtitle: 'Detailed risk event analysis' },
+      '/risk-evaluation': { title: 'Risk Evaluation', subtitle: 'Model performance and held-out metrics' },
+      '/risk-simulator': { title: 'Payment Risk Simulator', subtitle: 'Deterministic scenario simulation' },
+      '/risk-audit': { title: 'Risk Audit', subtitle: 'Decision history and compliance trail' },
     };
     if (pathname.startsWith('/entities/')) return { title: 'Entity Investigation', subtitle: 'Behavioral profile analysis' };
     return routes[pathname] || { title: 'Entropy Atlas', subtitle: '' };
@@ -153,8 +175,11 @@ const Layout = ({ children }) => {
 
   return (
     <div className="app-layout">
+      {/* Keyboard Accessible Skip Link */}
+      <a href="#main-content-start" className="skip-link">Skip to main content</a>
+      
       <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
-      <main className="main-content" style={{ marginLeft: isSidebarOpen ? 'var(--sidebar-width)' : 'var(--sidebar-collapsed)' }}>
+      <main id="main-content-start" className="main-content" style={{ marginLeft: isSidebarOpen ? 'var(--sidebar-width)' : 'var(--sidebar-collapsed)' }}>
         <header className="page-header">
           <div className="page-header-inner">
             <div className="page-title-section">

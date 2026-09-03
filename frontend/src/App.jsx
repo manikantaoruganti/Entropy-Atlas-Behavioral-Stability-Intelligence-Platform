@@ -14,6 +14,11 @@ import MetricsCenter from './pages/MetricsCenter';
 import SystemHealth from './pages/SystemHealth';
 import Architecture from './pages/Architecture';
 import EventIngestion from './pages/EventIngestion';
+import RiskCommandCenter from './pages/RiskCommandCenter';
+import RiskInvestigation from './pages/RiskInvestigation';
+import RiskEvaluation from './pages/RiskEvaluation';
+import PaymentRiskSimulator from './pages/PaymentRiskSimulator';
+import RiskAudit from './pages/RiskAudit';
 import { Toaster } from 'react-hot-toast';
 
 const queryClient = new QueryClient({
@@ -33,7 +38,8 @@ export default function App() {
       <Router>
         <Layout>
           <Routes>
-            <Route path="/" element={<Dashboard />} />
+            <Route path="/" element={<RiskCommandCenter />} />
+            <Route path="/stability-dashboard" element={<Dashboard />} />
             <Route path="/entities" element={<Entities />} />
             <Route path="/entities/:id" element={<EntityProfile />} />
             <Route path="/entropy-explorer" element={<EntropyExplorer />} />
@@ -45,6 +51,11 @@ export default function App() {
             <Route path="/system-health" element={<SystemHealth />} />
             <Route path="/architecture" element={<Architecture />} />
             <Route path="/event-ingestion" element={<EventIngestion />} />
+            <Route path="/risk-command-center" element={<RiskCommandCenter />} />
+            <Route path="/risk-investigation" element={<RiskInvestigation />} />
+            <Route path="/risk-evaluation" element={<RiskEvaluation />} />
+            <Route path="/risk-simulator" element={<PaymentRiskSimulator />} />
+            <Route path="/risk-audit" element={<RiskAudit />} />
           </Routes>
         </Layout>
       </Router>
