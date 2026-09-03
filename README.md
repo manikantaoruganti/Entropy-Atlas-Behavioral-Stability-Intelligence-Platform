@@ -326,6 +326,7 @@ The AI Risk Manager extends the existing Spring Boot application with a dedicate
 
 ```
 ---
+
 ## 8.1 Architecture Diagram
 
 ![Entropy Atlas Architecture Diagram](images/architecture.png)
@@ -546,7 +547,7 @@ Entropy-Atlas/
 * **Risk evaluation data**: Stores evaluation results used to measure the performance of the payment-risk detection workflow against labeled evaluation data.
 ---
 
-### 13. Behavioral Event Lifecycle
+## 13. Behavioral Event Lifecycle
 
 ```text
 [1. INGESTION] -> [2. STORAGE] -> [3. KAFKA] -> [4. STREAM PROCESSING] -> [5. MATERIALIZATION]
