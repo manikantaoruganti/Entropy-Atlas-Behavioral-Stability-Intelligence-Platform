@@ -183,6 +183,29 @@ These signals are combined by the existing risk-scoring pipeline to produce a ri
 ### Telemetry Event Ingestion
 ![Event Ingestion](images/telemetry-event-ingestion.png)
 *Direct injection interface for simulating load and triggering drift anomalies.*
+### Risk Command Center
+![Risk Command Center](images/risk-command-center.png)
+*Centralized payment-risk operations view showing risk events, high-risk and critical alerts, AI verification activity, detection metrics, policy blocks, and recent defensive decisions.*
+
+### Risk Investigation
+![Risk Investigation](images/risk-investigation.png)
+*Operational investigation workspace for reviewing payment-risk alerts, risk scores, severity levels, recommended actions, and individual incident details.*
+
+### Risk Investigation Detail
+![Risk Investigation Detail](images/risk-investigation-detail.png)
+*Detailed incident analysis combining entity information, behavioral evidence, risk assessment, AI verification context, policy decisions, and audit activity.*
+
+### Risk Evaluation
+![Risk Evaluation](images/risk-evaluation.png)
+*Held-out risk detection evaluation showing precision, recall, F1 score, confusion-matrix results, classification distribution, error rates, and false-positive and false-negative costs.*
+
+### Payment Risk Simulator
+![Payment Risk Simulator](images/payment-risk-simulator.png)
+*Controlled payment-risk scenario simulation interface for exercising normal traffic, velocity spikes, geographic drift, device drift, amount anomalies, payment-method shifts, coordinated abuse, and policy-block scenarios.*
+
+### Risk Audit Trail
+![Risk Audit Trail](images/risk-audit-trail.png)
+*Decision history and compliance-oriented audit trail showing correlation IDs, entities, risk levels, applied policies, defensive decisions, and timestamps.*
 
 ---
 
