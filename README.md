@@ -381,12 +381,13 @@ The AI Risk Manager extends the existing Spring Boot application with a dedicate
 
 ```text
 Entropy-Atlas/
-│   docker-compose.yml          # Multi-container orchestration
-│   README.md                   # Project documentation
+│
+├── docker-compose.yml                 # Multi-container orchestration
+├── README.md                          # Project documentation
 │
 ├── backend
-│   │   Dockerfile              # Spring Boot container image
-│   │   pom.xml                 # Maven dependencies
+│   │   Dockerfile                     # Spring Boot container image
+│   │   pom.xml                        # Maven dependencies
 │   │
 │   └── src
 │       └── main
@@ -394,16 +395,21 @@ Entropy-Atlas/
 │           │   └── com
 │           │       └── entropyatlas
 │           │           └── entropyatlas
+│           │               │
 │           │               │   EntropyAtlasApplication.java
 │           │               │
-│           │               ├── api          # Controllers, DTOs, Filters (REST Layer)
+│           │               ├── api
+│           │               │   │
 │           │               │   ├── controllers
 │           │               │   │       AdminController.java
 │           │               │   │       AnalyticsController.java
 │           │               │   │       DashboardController.java
 │           │               │   │       EntityController.java
 │           │               │   │       EntityIntelligenceController.java
+│           │               │   │       EvaluationController.java
 │           │               │   │       EventController.java
+│           │               │   │       PaymentRiskController.java
+│           │               │   │       PaymentRiskScenarioController.java
 │           │               │   │       PlatformMetricsController.java
 │           │               │   │       ReplayIntelligenceController.java
 │           │               │   │       StreamController.java
@@ -414,50 +420,115 @@ Entropy-Atlas/
 │           │               │   │       BehaviorEventResponse.java
 │           │               │   │       DriftExplanationResponse.java
 │           │               │   │       EntityResponse.java
+│           │               │   │       PaymentRiskEventRequest.java
+│           │               │   │       PaymentRiskEventResponse.java
+│           │               │   │       PaymentRiskScenario.java
 │           │               │   │       ReplayReportResponse.java
+│           │               │   │       RiskAlertResponse.java
+│           │               │   │       RiskAuditLogResponse.java
+│           │               │   │       RiskDecisionRequest.java
+│           │               │   │       RiskDecisionResponse.java
+│           │               │   │       RiskEvaluationMetricsResponse.java
+│           │               │   │       RiskEvidenceResponse.java
+│           │               │   │       RiskIncidentResponse.java
+│           │               │   │       RiskInvestigationRequest.java
+│           │               │   │       RiskInvestigationResponse.java
+│           │               │   │       RiskReplayResponse.java
+│           │               │   │       RiskScenarioSimulationRequest.java
+│           │               │   │       RiskScenarioSimulationResponse.java
 │           │               │   │       StabilitySnapshotResponse.java
+│           │               │   │       StartScenarioRequest.java
+│           │               │   │       StartScenarioResponse.java
 │           │               │   │
 │           │               │   └── filters
 │           │               │           CorrelationIdFilter.java
 │           │               │
-│           │               ├── config       # Kafka, Redis, OpenAPI configurations
+│           │               ├── config
+│           │               │       EvaluationProperties.java
 │           │               │       KafkaConfig.java
+│           │               │       MetricsConfig.java
 │           │               │       OpenApiConfig.java
 │           │               │       RedisConfig.java
+│           │               │       RestTemplateConfig.java
+│           │               │       RiskPolicyProperties.java
 │           │               │
-│           │               ├── domain       # JPA Entities
+│           │               ├── domain
 │           │               │       BehaviorEvent.java
 │           │               │       DriftExplanation.java
 │           │               │       Entity.java
+│           │               │       PaymentRisk.java
 │           │               │       ReplayReport.java
+│           │               │       RiskAuditEvent.java
+│           │               │       RiskDecision.java
+│           │               │       RiskEvaluation.java
+│           │               │       RiskEvidence.java
+│           │               │       RiskPolicyAudit.java
+│           │               │       RiskScenario.java
 │           │               │       StabilitySnapshot.java
 │           │               │
-│           │               ├── exceptions   # Global exception handling
+│           │               ├── exceptions
 │           │               │       ResourceNotFoundException.java
 │           │               │
-│           │               ├── repositories # Spring Data JPA Repositories
+│           │               ├── model
+│           │               │       EvaluationResult.java
+│           │               │
+│           │               ├── repositories
 │           │               │       BehaviorEventRepository.java
 │           │               │       DriftExplanationRepository.java
 │           │               │       EntityRepository.java
+│           │               │       PaymentRiskRepository.java
 │           │               │       ReplayReportRepository.java
+│           │               │       RiskAuditEventRepository.java
+│           │               │       RiskDecisionRepository.java
+│           │               │       RiskEvaluationRepository.java
+│           │               │       RiskEvidenceRepository.java
+│           │               │       RiskPolicyAuditRepository.java
+│           │               │       RiskScenarioRepository.java
 │           │               │       StabilitySnapshotRepository.java
 │           │               │
-│           │               ├── services     # Core Business Logic (Engines)
-│           │               │       BehavioralIntelligencePipeline.java
-│           │               │       DriftAnalysisService.java
-│           │               │       EntropyCalculationService.java
-│           │               │       EventIngestionService.java
-│           │               │       ExplainabilityService.java
-│           │               │       FeatureExtractionService.java
-│           │               │       MetricsService.java
-│           │               │       ReplayEngineService.java
-│           │               │       StabilityScoringService.java
+│           │               ├── repository
+│           │               │       EvaluationResultRepository.java
 │           │               │
-│           │               ├── streams      # Kafka Streams Topology Definition
+│           │               ├── services
+│           │               │   │   BehavioralIntelligencePipeline.java
+│           │               │   │   DriftAnalysisService.java
+│           │               │   │   EntropyCalculationService.java
+│           │               │   │   EventIngestionService.java
+│           │               │   │   ExplainabilityService.java
+│           │               │   │   FeatureExtractionService.java
+│           │               │   │   MetricsService.java
+│           │               │   │   PaymentRiskScenarioSimulator.java
+│           │               │   │   PaymentRiskService.java
+│           │               │   │   PaymentRiskServiceImpl.java
+│           │               │   │   ReplayEngineService.java
+│           │               │   │   RiskEvaluationService.java
+│           │               │   │   RiskPolicyService.java
+│           │               │   │   RiskScoringService.java
+│           │               │   │   RiskScoringServiceImpl.java
+│           │               │   │   StabilityScoringService.java
+│           │               │   │
+│           │               │   ├── ai
+│           │               │   │   │   AIRiskInvestigator.java
+│           │               │   │   │   AIRiskInvestigatorImpl.java
+│           │               │   │   │
+│           │               │   │   └── dto
+│           │               │   │           AIRiskVerificationRequest.java
+│           │               │   │           AIRiskVerificationResult.java
+│           │               │   │           DecisionEnum.java
+│           │               │   │
+│           │               │   └── impl
+│           │               │           RiskPolicyServiceImpl.java
+│           │               │
+│           │               ├── streams
 │           │               │       KafkaStreamsTopology.java
+│           │               │       PaymentRiskProcessor.java
 │           │               │
-│           │               └── tools        # Data Generators
-│           │                       EntropyAtlasDataGenerator.java
+│           │               ├── tools
+│           │               │       EntropyAtlasDataGenerator.java
+│           │               │       SyntheticRiskDatasetGenerator.java
+│           │               │
+│           │               └── utils
+│           │                       MetricsCalculator.java
 │           │
 │           └── resources
 │                   application.yml
@@ -478,11 +549,11 @@ Entropy-Atlas/
 │       │   index.css
 │       │   main.jsx
 │       │
-│       ├── api          # Axios instance and React Hooks
+│       ├── api
 │       │       axiosInstance.js
 │       │       hooks.js
 │       │
-│       ├── components   # Reusable UI components (Cards, Tables, Modals)
+│       ├── components
 │       │       Button.jsx
 │       │       Card.jsx
 │       │       ChartContainer.jsx
@@ -496,7 +567,7 @@ Entropy-Atlas/
 │       ├── constants
 │       │       index.js
 │       │
-│       ├── pages        # Route Components
+│       ├── pages
 │       │       Architecture.jsx
 │       │       Dashboard.jsx
 │       │       DriftAttribution.jsx
@@ -505,12 +576,17 @@ Entropy-Atlas/
 │       │       EntropyExplorer.jsx
 │       │       EventIngestion.jsx
 │       │       MetricsCenter.jsx
+│       │       PaymentRiskSimulator.jsx
 │       │       ReplayCenter.jsx
+│       │       RiskAudit.jsx
+│       │       RiskCommandCenter.jsx
+│       │       RiskEvaluation.jsx
+│       │       RiskInvestigation.jsx
 │       │       StabilityTimeline.jsx
 │       │       StreamAnalytics.jsx
 │       │       SystemHealth.jsx
 │       │
-│       └── utils        # Helper functions
+│       └── utils
 │               index.js
 │
 ├── grafana
@@ -524,6 +600,7 @@ Entropy-Atlas/
 │
 ├── images
 │       active-drift-entity.png
+│       architecture.png
 │       behavioral-entity-directory.png
 │       behavioral-event-timeline.png
 │       behavioral-profile-analysis.png
@@ -534,9 +611,15 @@ Entropy-Atlas/
 │       global-stability-timeline.png
 │       infrastructure.png
 │       multi-dimensional-entropy-decomposition.png
+│       payment-risk-simulator.png
 │       platform-metrics.png
 │       platform-stability-overview.png
 │       replay-engine.png
+│       risk-audit-trail.png
+│       risk-command-center.png
+│       risk-evaluation.png
+│       risk-investigation-detail.png
+│       risk-investigation.png
 │       stream-processing.png
 │       system-topology.png
 │       telemetry-event-ingestion.png
