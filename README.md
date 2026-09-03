@@ -548,7 +548,7 @@ Entropy-Atlas/
 
 ## 13. Behavioral Event Lifecycle
 
-```text
+
 [1. INGESTION] -> [2. STORAGE] -> [3. KAFKA] -> [4. STREAM PROCESSING] -> [5. MATERIALIZATION]
 
 1. Client POSTs to /api/v1/events
