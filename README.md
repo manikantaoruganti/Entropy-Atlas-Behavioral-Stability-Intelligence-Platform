@@ -96,7 +96,8 @@ The same behavioral intelligence provides the foundation for the platform's AI R
 
 These signals are combined by the existing risk-scoring pipeline to produce a risk assessment, which can then be subjected to AI verification and incorporated into the broader detection, investigation, decision, and audit workflow.
 
-This distinction is important: **Behavioral Stability Intelligence provides the underlying behavioral signals, while the AI Risk Manager operationalizes those signals for defensive payment-risk detection and response.**
+> **Key Distinction:** Behavioral Stability Intelligence provides the underlying behavioral signals, while the AI Risk Manager operationalizes those signals for defensive payment-risk detection and respons
+
 ---
 
 ## 6. Core Features
