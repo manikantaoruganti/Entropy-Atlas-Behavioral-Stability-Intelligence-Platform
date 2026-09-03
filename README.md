@@ -325,6 +325,7 @@ The AI Risk Manager extends the existing Spring Boot application with a dedicate
 
 
 ```
+---
 ## 8.1 Architecture Diagram
 
 ![Entropy Atlas Architecture Diagram](images/architecture.png)
@@ -556,7 +557,6 @@ Entropy-Atlas/
 4. Kafka Streams consumes the event and runs it through the Behavioral Intelligence Pipeline.
 5. The pipeline emits the resulting stability state to the 'entity-stability' topic.
 6. Spring consumes the stability output, saves it as a StabilitySnapshot, and updates the Redis cache.
----
 ---
 
 ### 14. Behavioral Intelligence Pipeline
